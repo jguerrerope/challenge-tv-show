@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--Lato regular-->
+    <style name="TextLatoRegular">
+        <item name="android:fontFamily">@font/lato_regular</item>
+    </style>
+
+    <!--Lato bold-->
+    <style name="TextLatoBold">
+        <item name="android:fontFamily">@font/lato_bold</item>
+    </style>
+
+</resources>
