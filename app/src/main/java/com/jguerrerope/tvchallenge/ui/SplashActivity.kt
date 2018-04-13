@@ -23,7 +23,7 @@ class SplashActivity : AppCompatActivity() {
      */
     private val runnable: Runnable = Runnable {
         if (!isFinishing) {
-            startActivity<MainActivity>()
+            startActivity<TvShowListActivity>()
             finish()
         }
     }
