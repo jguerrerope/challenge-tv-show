@@ -29,19 +29,20 @@ task clean(type: Delete) {
 ext {
     // default config app
     appVersionCode = 1
-    appVersionName = "1.0"
+    appVersionName = '1.0'
     minSdkVersion = 16
     targetSdkVersion = 27
     compileSdkVersion = 27
     buildToolsVersion = '27.0.3'
 
     // android core
-    supportLibraryVersion = '27.1.1'
+    supportLibraryVersion = "27.1.1"
     constraintLayoutVersion = '1.0.2'
 
     // android architecture components
-    archLifecycleVersion = "1.1.1"
-    roomVersion = "1.0.0"
+    archLifecycleVersion = '1.1.1'
+    roomVersion = '1.0.0'
+    pagingVersion = '1.0.0-beta1'
 
     // android view vendor utils
     glideVersion = '4.3.0'
@@ -62,5 +63,5 @@ ext {
     espressoCoreVersion = '3.0.1'
     mockitoVersion = '2.13.0'
     mockitokotlinVersion = '1.5.0'
-    mockwebServerVersion = "3.8.1"
+    mockwebServerVersion = '3.8.1'
 }
