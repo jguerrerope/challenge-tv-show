@@ -15,6 +15,7 @@ import com.jguerrerope.tvchallenge.extension.visibleOrGone
 import com.jguerrerope.tvchallenge.ui.adapter.TvShowPagedListAdapter
 import com.jguerrerope.tvchallenge.ui.viewmodel.TvShowPopularViewModel
 import kotlinx.android.synthetic.main.activity_tv_show_list.*
+import org.jetbrains.anko.startActivity
 import javax.inject.Inject
 
 class TvShowListActivity : AppCompatActivity(), Injectable {
@@ -32,7 +33,9 @@ class TvShowListActivity : AppCompatActivity(), Injectable {
     }
 
     private fun setUpViews() {
-        tvShowPagedListAdapter = TvShowPagedListAdapter {}
+        tvShowPagedListAdapter = TvShowPagedListAdapter {
+            startActivity<TvShowDetailsActivity>(Pair(TvShowDetailsActivity.EXTRA_TV_SHOW, it))
+        }
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this@TvShowListActivity)
             adapter = tvShowPagedListAdapter

@@ -13,11 +13,11 @@ import com.jguerrerope.tvchallenge.data.TvShow
 import com.jguerrerope.tvchallenge.ui.item.TvShowItemView
 
 /**
- * PagedListAdapter used to display Github repositories
+ * PagedListAdapter used to display TvShow
  *
- * @param onRepoLongClick what has to be done when a RepositoryItemView gets clicked
+ * @param onItemClick what has to be done when a TvShowItemView gets clicked
  */
-class TvShowPagedListAdapter(private val onRepoLongClick: (tvShow: TvShow) -> Unit) :
+class TvShowPagedListAdapter(private val onItemClick: (tvShow: TvShow) -> Unit) :
         PagedListAdapterBase<TvShow>(diffCallback) {
 
     private var hasExtraRow = false
@@ -35,10 +35,10 @@ class TvShowPagedListAdapter(private val onRepoLongClick: (tvShow: TvShow) -> Un
             (holder.view as TvShowItemView).apply {
                 val item = getItem(position)
                 if (item == null) {
-                    setOnLongClickListener(null)
+                    setOnClickListener(null)
                     placeholder()
                 } else {
-                    setOnLongClickListener { onRepoLongClick(item); true }
+                    setOnClickListener { onItemClick(item) }
                     bind(item)
                 }
             }

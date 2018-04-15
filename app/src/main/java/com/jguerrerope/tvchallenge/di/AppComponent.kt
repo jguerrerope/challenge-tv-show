@@ -11,7 +11,7 @@ import javax.inject.Singleton
         modules = [
             (AndroidInjectionModule::class),
             (AppModule::class),
-            (MainActivityModule::class)
+            (ActivityModule::class)
         ]
 )
 abstract class AppComponent {
