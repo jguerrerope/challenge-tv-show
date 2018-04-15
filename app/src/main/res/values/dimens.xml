@@ -5,6 +5,7 @@
 
     <!--Text size dimens-->
     <dimen name="text_size_60">60sp</dimen>
+    <dimen name="text_size_20">20sp</dimen>
     <dimen name="text_size_16">16sp</dimen>
     <dimen name="text_size_14">14sp</dimen>
     <dimen name="text_size_12">12sp</dimen>

@@ -4,14 +4,13 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.arch.paging.LivePagedListBuilder
-import android.support.annotation.MainThread
 import com.jguerrerope.tvchallenge.api.TMDBService
 import com.jguerrerope.tvchallenge.api.TvShowListResponse
 import com.jguerrerope.tvchallenge.api.TvShowResponseMapper
 import com.jguerrerope.tvchallenge.data.Listing
 import com.jguerrerope.tvchallenge.data.NetworkState
 import com.jguerrerope.tvchallenge.data.TvShow
-import com.jguerrerope.tvchallenge.db.TvShowDao
+import com.jguerrerope.tvchallenge.db.TvShowDatabase
 import io.reactivex.Scheduler
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -20,7 +19,7 @@ import javax.inject.Singleton
 @Singleton
 class TvShowRepositoryImpl @Inject constructor(
         private val api: TMDBService,
-        private val tvShowDao: TvShowDao,
+        private val database: TvShowDatabase,
         private val tvShowResponseMapper: TvShowResponseMapper
 ) : TvShowRepository {
 
@@ -31,15 +30,15 @@ class TvShowRepositoryImpl @Inject constructor(
         // the list and update the database with extra data.
         val boundaryCallback = TvShowPopularBoundaryCallback(
                 webservice = api,
-                dao = tvShowDao,
+                dao = database.tvShowDao(),
                 itemsPerPage = itemsPerPage,
                 handleResponse = this::insertTvShowListIntoDb,
                 backgroundScheduler = backgroundScheduler
         )
         // create a data source factory from Room
         val builder =
-                LivePagedListBuilder(tvShowDao.tvShowDataFactory(), itemsPerPage)
-                .setBoundaryCallback(boundaryCallback)
+                LivePagedListBuilder(database.tvShowDao().tvShowDataFactory(), itemsPerPage)
+                        .setBoundaryCallback(boundaryCallback)
 
         // we are using a mutable live data to trigger refresh requests which eventually calls
         // refresh method and gets a new live data. Each refresh request by the user becomes a newly
@@ -68,10 +67,10 @@ class TvShowRepositoryImpl @Inject constructor(
      */
     private fun insertTvShowListIntoDb(response: TvShowListResponse?) {
         response?.let {
-            val nextIndex = tvShowDao.getNextIndex()
+            val nextIndex = database.tvShowDao().getNextIndex()
             val items = tvShowResponseMapper.toEntity(it.results)
             items.forEachIndexed { index, item -> item.indexInResponse = nextIndex + index }
-            tvShowDao.insertList(items)
+            database.tvShowDao().insertList(items)
         }
     }
 
@@ -82,22 +81,24 @@ class TvShowRepositoryImpl @Inject constructor(
      * Since the PagedList already uses a database bound data source, it will automatically be
      * updated after the database transaction is finished.
      */
-    @MainThread
     private fun refreshTvShowPopular(backgroundScheduler: Scheduler): LiveData<NetworkState> {
         val networkState = MutableLiveData<NetworkState>()
-        networkState.value = NetworkState.INITIAL_LOADING
+        networkState.value = NetworkState.LOADING
         api.getTvShowPopular(1)
-                .observeOn(backgroundScheduler)
+                .subscribeOn(backgroundScheduler)
                 .subscribeBy(
                         onSuccess = {
-                           tvShowDao.deleteAll()
-                            insertTvShowListIntoDb(it)
+                            database.runInTransaction {
+                                database.tvShowDao().deleteAll()
+                                insertTvShowListIntoDb(it)
+                            }
+
                             // since we are in bg thread now, post the result.
                             networkState.postValue(NetworkState.LOADED)
                         },
                         onError = {
                             // retrofit calls this on main thread so safe to call set value
-                            networkState.value = NetworkState.error(it)
+                            networkState.postValue(NetworkState.error(it))
                         }
                 )
         return networkState
