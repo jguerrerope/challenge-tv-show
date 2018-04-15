@@ -7,10 +7,10 @@ data class TvShowListResponse(
         val page: Int,
 
         @SerializedName("total_results")
-        val total_results: Int,
+        val totalResults: Int,
 
         @SerializedName("total_pages")
-        val total_pages: Int,
+        val totalPages: Int,
 
         @SerializedName("results")
         val results: List<TvShowResponse>

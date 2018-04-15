@@ -19,11 +19,11 @@ class TvShowDatabaseTest {
         private val testTvShowList = (1..Configuration.NUMBER_OF_ITEMS_PER_PAGE).map {
             TvShow(
                     id = it,
-                    name = "name$it",
+                    name = "name $it",
                     popularity = it.toFloat(),
                     voteCount = it,
                     voteAverage = it.toFloat(),
-                    overview = "The Big Bang Theory ",
+                    overview = "overview $it",
                     backdropPath = "backdropPath $it",
                     posterPath = "posterPath $it"
             ).apply {
