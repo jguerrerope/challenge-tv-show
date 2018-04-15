@@ -62,6 +62,6 @@ ext {
     androidRunnerVersion = '1.0.1'
     espressoCoreVersion = '3.0.1'
     mockitoVersion = '2.13.0'
-    mockitokotlinVersion = '1.5.0'
     mockwebServerVersion = '3.8.1'
+    mockitokotlinVersion = "1.5.0"
 }

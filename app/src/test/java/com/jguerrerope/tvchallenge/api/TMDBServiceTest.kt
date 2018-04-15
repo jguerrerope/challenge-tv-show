@@ -7,15 +7,13 @@ import okio.Okio
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 
-@RunWith(JUnit4::class)
 class TMDBServiceTest {
     private lateinit var service: TMDBService
     private lateinit var mockWebServer: MockWebServer
@@ -43,9 +41,8 @@ class TMDBServiceTest {
         enqueueResponse("tv-show-list.json")
         service.getTvShowPopular(page = 1)
                 .test()
-                .assertValue { it.body() != null }
-                .assertValue { it.body()!!.page == 1 }
-                .assertValue { it.body()!!.results.size == Configuration.NUMBER_OF_ITEMS_PER_PAGE }
+                .assertValue { it.page == 1 }
+                .assertValue { it.results.size == Configuration.NUMBER_OF_ITEMS_PER_PAGE }
     }
 
     @Test
@@ -53,8 +50,7 @@ class TMDBServiceTest {
         mockWebServer.enqueue(MockResponse().setBody("{error:\"bad request\"").setResponseCode(400))
         service.getTvShowPopular(page = -1)
                 .test()
-                .assertValue { it.body() == null }
-                .assertValue { !it.isSuccessful}
+                .assertError(HttpException::class.java)
     }
 
     @Throws(IOException::class)

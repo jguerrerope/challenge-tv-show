@@ -37,4 +37,12 @@ interface TvShowDao {
      */
     @Query("SELECT MAX(indexInResponse) + 1 FROM tv_show")
     fun getNextIndex(): Int
+
+    /**
+     * Delete all tv shows in database
+     *
+     * @return The next index to use in [TvShow] table
+     */
+    @Query("delete FROM tv_show")
+    fun deleteAll()
 }

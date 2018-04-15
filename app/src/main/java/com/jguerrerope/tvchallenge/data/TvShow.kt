@@ -15,8 +15,8 @@ data class TvShow(
         val voteCount: Int,
         val voteAverage: Float,
         val overview: String,
-        val backdropPath: String,
-        val posterPath: String
+        val backdropPath: String?,
+        val posterPath: String?
 ) {
     // To be consistent with changing backend order, we need to keep data like this
     var indexInResponse: Int = -1
