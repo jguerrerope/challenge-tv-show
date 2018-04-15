@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlinVersion = '1.2.30'
+    ext.kotlinVersion = '1.2.31'
     ext.androidPluginVversion = '3.0.1'
     repositories {
         google()
@@ -10,8 +10,6 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$rootProject.androidPluginVversion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$rootProject.kotlinVersion"
-        classpath "org.jetbrains.kotlin:kotlin-android-extensions:$rootProject.kotlinVersion"
-
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -30,23 +28,40 @@ task clean(type: Delete) {
 
 ext {
     // default config app
-    appName = "Ittinere"
     appVersionCode = 1
-    appVersionName = "1.0"
+    appVersionName = '1.0'
     minSdkVersion = 16
     targetSdkVersion = 27
     compileSdkVersion = 27
     buildToolsVersion = '27.0.3'
 
     // android core
-    supportLibraryVersion = '27.1.1'
+    supportLibraryVersion = "27.1.1"
     constraintLayoutVersion = '1.0.2'
 
+    // android architecture components
+    archLifecycleVersion = '1.1.1'
+    roomVersion = '1.0.0'
+    pagingVersion = '1.0.0-beta1'
+
+    // android view vendor utils
+    glideVersion = '4.3.0'
+
     //kotlin/java utils
-    ankoVersion = '0.10.1'
+    ankoVersion = '0.10.4'
+    gsonVersion = '2.4'
+    daggerVersion = '2.11'
+    rxjavaVersion = '2.1.9'
+    rxAndroidVersion = '2.0.1'
+    rxKotlinVersion = '2.2.0'
+    retrofitVersion = '2.3.0'
+    okhttp3LoggingInterceptor = '3.8.0'
 
     // test
     junitVersion = '4.12'
     androidRunnerVersion = '1.0.1'
     espressoCoreVersion = '3.0.1'
+    mockitoVersion = '2.13.0'
+    mockwebServerVersion = '3.8.1'
+    mockitokotlinVersion = "1.5.0"
 }

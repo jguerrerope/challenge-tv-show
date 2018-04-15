@@ -12,10 +12,6 @@ import java.util.concurrent.TimeUnit
  * The {@link SplashActivity} of the app that make as point entry
  */
 class SplashActivity : AppCompatActivity() {
-    companion object {
-        private val SPLASH_DELAY = TimeUnit.SECONDS.toMillis(2)
-    }
-
     private var delayHandler = Handler()
 
     /**
@@ -23,7 +19,7 @@ class SplashActivity : AppCompatActivity() {
      */
     private val runnable: Runnable = Runnable {
         if (!isFinishing) {
-            startActivity<MainActivity>()
+            startActivity<TvShowListActivity>()
             finish()
         }
     }
@@ -40,5 +36,9 @@ class SplashActivity : AppCompatActivity() {
         // remove Runnable router
         delayHandler.removeCallbacks(runnable)
         super.onDestroy()
+    }
+
+    companion object {
+        private val SPLASH_DELAY = TimeUnit.SECONDS.toMillis(2)
     }
 }
