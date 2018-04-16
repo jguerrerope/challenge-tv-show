@@ -17,4 +17,19 @@ interface TvShowRepository {
      */
     fun getTvShowPopularListing(itemsPerPage: Int, backgroundScheduler: Scheduler): Listing<TvShow>
 
+
+    /**
+     * Gets a [Listing] of TvShow Similar
+     *
+     * @param tvShowId The id of TvShow for search similar
+     * @param itemsPerPage The number of items that we want to retrieve
+     * @param backgroundScheduler The scheduler of background processing
+     * @return [Listing]  a Listing for the given TvShow popular.
+     */
+    fun getTvShowSimilarListing(
+            tvShowId: Int,
+            itemsPerPage: Int,
+            prefetchDistance: Int,
+            backgroundScheduler: Scheduler): Listing<TvShow>
+
 }

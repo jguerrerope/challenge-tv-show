@@ -5,10 +5,6 @@ import android.arch.lifecycle.ViewModelProvider
 import javax.inject.Inject
 import javax.inject.Provider
 
-/**
- * Created by jorge.guerrero on 10/2017.
- */
-
 class TvShowViewModelFactory @Inject constructor(
         private val creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>
 ) : ViewModelProvider.Factory {
@@ -23,7 +19,7 @@ class TvShowViewModelFactory @Inject constructor(
                 }
             }
         }
-        if (creator == null) throw IllegalArgumentException("unknown model class " + modelClass)
+        if (creator == null) throw IllegalArgumentException("unknown model class $modelClass")
         try {
             return creator.get() as T
         } catch (e: Exception) {

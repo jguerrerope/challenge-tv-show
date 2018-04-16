@@ -7,7 +7,7 @@ import com.jguerrerope.tvchallenge.data.TvShow
 /**
  * Main database description.
  */
-@Database(entities = [(TvShow::class)], version = 1)
+@Database(entities = [(TvShow::class)], version = 1,exportSchema = false)
 abstract class TvShowDatabase : RoomDatabase() {
     abstract fun tvShowDao(): TvShowDao
 }
