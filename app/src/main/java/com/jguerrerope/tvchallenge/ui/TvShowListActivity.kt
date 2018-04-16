@@ -26,6 +26,7 @@ class TvShowListActivity : AppCompatActivity(), Injectable {
     private lateinit var tvShowPagedListAdapter: TvShowPagedListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        overridePendingTransition(R.anim.transition_fade_in, R.anim.transition_no_animation)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tv_show_list)
         setUpViews()
@@ -33,7 +34,7 @@ class TvShowListActivity : AppCompatActivity(), Injectable {
     }
 
     private fun setUpViews() {
-        tvShowPagedListAdapter = TvShowPagedListAdapter {
+        tvShowPagedListAdapter = TvShowPagedListAdapter{
             startActivity<TvShowDetailsActivity>(Pair(TvShowDetailsActivity.EXTRA_TV_SHOW, it))
         }
         recyclerView.apply {
@@ -62,9 +63,7 @@ class TvShowListActivity : AppCompatActivity(), Injectable {
         viewModel.networkState.observe(this, tvShowPagedListAdapter.networkStateObserver)
         viewModel.networkState.observe(this) {
             it ?: return@observe
-
-            progress.visibleOrGone(it == NetworkState.INITIAL_LOADING &&
-                    it.status == Status.RUNNING)
+            progress.visibleOrGone(it == NetworkState.INITIAL_LOADING)
 
             if (it.status == Status.FAILED) {
                 Snackbar.make(recyclerView, R.string.network_error, Snackbar.LENGTH_LONG)

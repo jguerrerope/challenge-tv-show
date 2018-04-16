@@ -2,6 +2,7 @@ package com.jguerrerope.tvchallenge.ui.adapter
 
 import android.arch.lifecycle.Observer
 import android.support.v7.util.DiffUtil
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
@@ -17,26 +18,39 @@ import com.jguerrerope.tvchallenge.ui.item.TvShowItemView
  *
  * @param onItemClick what has to be done when a TvShowItemView gets clicked
  */
-class TvShowPagedListAdapter(private val onItemClick: (tvShow: TvShow) -> Unit) :
-        PagedListAdapterBase<TvShow>(diffCallback) {
-
+class TvShowPagedListAdapter(
+        private val onItemClick: (tvShow: TvShow) -> Unit
+) : PagedListAdapterBase<TvShow>(diffCallback) {
     private var hasExtraRow = false
 
+    var itemParentWithPercentage = -1f
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        recyclerView.layoutManager.canScrollVertically()
+    }
+
     // We create a regular TvShowItemView or a ProgressBar that indicates that we are loading more repos
-    override fun onCreateItemView(parent: ViewGroup, viewType: Int): View =
-            if (viewType == 1) TvShowItemView(parent.context)
-            else ProgressBar(parent.context)
-                    .apply { layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT) }
+    override fun onCreateItemView(parent: ViewGroup, viewType: Int): View {
+        return when (viewType) {
+            VIEW_TYPE_PROGRESS -> ProgressBar(parent.context)
+            VIEW_TYPE_TV_SHOW -> TvShowItemView(parent.context)
+            else -> throw RuntimeException("bad type view")
+        }.apply {
+            layoutParams = if (itemParentWithPercentage in 0.0..1.0) {
+                val newWidth = (parent.measuredWidth * itemParentWithPercentage).toInt()
+                LayoutParams(newWidth, WRAP_CONTENT)
+            }else  LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+        }
+    }
 
     // We bind data to our view. In case of null items we can set the view as placeholder for the data that will arrive
     // at some point
     override fun onBindViewHolder(holder: ViewWrapper<View>, position: Int) {
-        if (getItemViewType(position) == 1) {
+        if (getItemViewType(position) == VIEW_TYPE_TV_SHOW) {
             (holder.view as TvShowItemView).apply {
                 val item = getItem(position)
                 if (item == null) {
                     setOnClickListener(null)
-                    placeholder()
                 } else {
                     setOnClickListener { onItemClick(item) }
                     bind(item)
@@ -46,7 +60,7 @@ class TvShowPagedListAdapter(private val onItemClick: (tvShow: TvShow) -> Unit) 
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (hasExtraRow && position == itemCount - 1) 2 else 1
+        return if (hasExtraRow && position == itemCount - 1) VIEW_TYPE_PROGRESS else VIEW_TYPE_TV_SHOW
     }
 
     override fun getItemCount(): Int = super.getItemCount() + if (hasExtraRow) 1 else 0
@@ -67,7 +81,10 @@ class TvShowPagedListAdapter(private val onItemClick: (tvShow: TvShow) -> Unit) 
     }
 
     companion object {
-        val diffCallback = object : DiffUtil.ItemCallback<TvShow>() {
+        private const val VIEW_TYPE_PROGRESS = 1
+        private const val VIEW_TYPE_TV_SHOW = 2
+
+        private val diffCallback = object : DiffUtil.ItemCallback<TvShow>() {
 
             // Lets assume that the name is a unique identifier for a repo. Even if
             // item content change at some point, the name will define if it is the
