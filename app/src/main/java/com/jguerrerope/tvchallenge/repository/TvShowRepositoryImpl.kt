@@ -18,7 +18,6 @@ import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 class TvShowRepositoryImpl @Inject constructor(
         private val api: TMDBService,
         private val database: TvShowDatabase,
