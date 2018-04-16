@@ -3,6 +3,7 @@ package com.jguerrerope.tvchallenge.api
 import com.jguerrerope.tvchallenge.BuildConfig
 import io.reactivex.Single
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**
@@ -14,6 +15,6 @@ interface TMDBService {
 
 
     @GET("tv/{tv_id}/similar?api_key=${BuildConfig.TMDB_ACCESS_TOKEN}")
-    fun getTvShowSimilar(@Query("tv_id") tvShowId: Int,
+    fun getTvShowSimilar(@Path("tv_id") tvShowId: Int,
                          @Query("page") page: Int): Single<TvShowListResponse>
 }

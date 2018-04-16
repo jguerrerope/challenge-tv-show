@@ -15,7 +15,7 @@ data class TvShow(
         val popularity: Float,
         val voteCount: Int,
         val voteAverage: Float,
-        val overview: String,
+        val overview: String?,
         val backdropPath: String?,
         val posterPath: String?
 ) : Serializable {

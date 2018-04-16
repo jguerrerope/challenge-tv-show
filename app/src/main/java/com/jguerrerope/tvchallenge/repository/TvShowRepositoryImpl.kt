@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.arch.paging.LivePagedListBuilder
+import android.arch.paging.PagedList
 import com.jguerrerope.tvchallenge.api.TMDBService
 import com.jguerrerope.tvchallenge.api.TvShowListResponse
 import com.jguerrerope.tvchallenge.api.TvShowResponseMapper
@@ -11,6 +12,7 @@ import com.jguerrerope.tvchallenge.data.Listing
 import com.jguerrerope.tvchallenge.data.NetworkState
 import com.jguerrerope.tvchallenge.data.TvShow
 import com.jguerrerope.tvchallenge.db.TvShowDatabase
+import com.jguerrerope.tvchallenge.extension.switchMap
 import io.reactivex.Scheduler
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -22,7 +24,6 @@ class TvShowRepositoryImpl @Inject constructor(
         private val database: TvShowDatabase,
         private val tvShowResponseMapper: TvShowResponseMapper
 ) : TvShowRepository {
-
     override fun getTvShowPopularListing(
             itemsPerPage: Int,
             backgroundScheduler: Scheduler): Listing<TvShow> {
@@ -61,6 +62,29 @@ class TvShowRepositoryImpl @Inject constructor(
         )
     }
 
+    override fun getTvShowSimilarListing(
+            tvShowId: Int, itemsPerPage: Int,
+            prefetchDistance: Int,
+            backgroundScheduler: Scheduler): Listing<TvShow> {
+        val sourceFactory = TvShowSimilarDataSourceFactory(api, tvShowId, itemsPerPage,
+                tvShowResponseMapper,
+                backgroundScheduler)
+        val pagedListConfig = PagedList.Config.Builder()
+                .setEnablePlaceholders(false)
+                .setInitialLoadSizeHint(prefetchDistance)
+                .setPageSize(itemsPerPage)
+                .build()
+        val pagedList = LivePagedListBuilder(sourceFactory, pagedListConfig)
+                .build()
+        val networkState = sourceFactory.sourceLiveData.switchMap { it.networkState }
+        return Listing(
+                pagedList = pagedList,
+                networkState = networkState,
+                retry = {},
+                refresh = {},
+                refreshState = networkState
+        )
+    }
 
     /**
      * Inserts the response into the database while also assigning position indices to items.
