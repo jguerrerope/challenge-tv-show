@@ -10,9 +10,7 @@ import com.jguerrerope.tvchallenge.data.NetworkState
 import com.jguerrerope.tvchallenge.data.TvShow
 import com.jguerrerope.tvchallenge.db.TvShowDao
 import com.jguerrerope.tvchallenge.utils.TestUtil
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.stub
+import com.nhaarman.mockito_kotlin.*
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.hamcrest.CoreMatchers
@@ -38,7 +36,8 @@ class TvShowRepositoryTest {
             on { tvShowDataFactory() } doReturn FakeRoomDataSourceFactory(arrayListOf())
             on { getNextIndex() } doReturn 1
         }
-        repository = TvShowRepositoryImpl(mock {}, mockTvShowDao, tvShowResponseMapper)
+        repository = TvShowRepositoryImpl(mock {},
+                mock { on { tvShowDao() } doReturn mockTvShowDao }, tvShowResponseMapper)
 
         val listing = repository.getTvShowPopularListing(
                 5, Schedulers.trampoline())
@@ -53,10 +52,11 @@ class TvShowRepositoryTest {
     fun verifyCompleteList() {
         val itemsOnePage = TestUtil.createTvShowList(5)
         val mockTvShowDao = mock<TvShowDao> {
-            on { tvShowDataFactory() } doReturn  FakeRoomDataSourceFactory(itemsOnePage)
+            on { tvShowDataFactory() } doReturn FakeRoomDataSourceFactory(itemsOnePage)
             on { getNextIndex() } doReturn 1
         }
-        repository = TvShowRepositoryImpl(mock {}, mockTvShowDao, tvShowResponseMapper)
+        repository = TvShowRepositoryImpl(mock {},
+                mock { on { tvShowDao() } doReturn mockTvShowDao }, tvShowResponseMapper)
 
         val listing = repository.getTvShowPopularListing(5, Schedulers.trampoline())
         val pagedList = getPagedList(listing)
@@ -90,14 +90,15 @@ class TvShowRepositoryTest {
             on { getNextIndex() } doReturn 1
         }
 
-        repository = TvShowRepositoryImpl(mockApi, mockTvShowDao, tvShowResponseMapper)
+        repository = TvShowRepositoryImpl(mockApi,
+                mock { on { tvShowDao() } doReturn mockTvShowDao }, tvShowResponseMapper)
 
         val listing = repository.getTvShowPopularListing(5, Schedulers.trampoline())
 
-        assertThat( getPagedList(listing).size, CoreMatchers.`is`(0))
+        assertThat(getPagedList(listing).size, CoreMatchers.`is`(0))
 
         @Suppress("UNCHECKED_CAST")
-        val networkObserver = Mockito.mock(Observer::class.java) as Observer<NetworkState>
+        val networkObserver: Observer<NetworkState> = mock {}
         listing.networkState.observeForever(networkObserver)
 
         mockApi.stub {
@@ -115,6 +116,8 @@ class TvShowRepositoryTest {
         val inOrder = Mockito.inOrder(networkObserver)
         inOrder.verify(networkObserver).onChanged(NetworkState.error("error"))
         inOrder.verify(networkObserver).onChanged(NetworkState.INITIAL_LOADING)
+        inOrder.verify(networkObserver).onChanged(NetworkState.LOADED)
+        inOrder.verify(networkObserver).onChanged(NetworkState.NEXT_LOADING)
         inOrder.verify(networkObserver).onChanged(NetworkState.LOADED)
         inOrder.verifyNoMoreInteractions()
     }

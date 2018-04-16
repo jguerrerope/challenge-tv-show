@@ -13,8 +13,8 @@ object TMDBImageUtils {
      * the sizes: "w92", "w154", "w185", "w342", "w500", "w780"
      */
 
-    fun formatUrlImageWithW342(file: String): String {
-        return BASE_IMAGE_URL_FORMAT.format("w342", file)
+    fun formatUrlImageWithW500(file: String): String {
+        return BASE_IMAGE_URL_FORMAT.format("w500", file)
     }
 
 }

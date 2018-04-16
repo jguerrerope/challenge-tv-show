@@ -96,7 +96,7 @@ class TvShowDetailsActivity : AppCompatActivity(), Injectable {
                 .placeholder(R.drawable.tv_place_holder)
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
 
-        val url = TMDBImageUtils.formatUrlImageWithW342(tvShow.backdropPath ?: tvShow.posterPath
+        val url = TMDBImageUtils.formatUrlImageWithW500(tvShow.backdropPath ?: tvShow.posterPath
         ?: "")
         Glide
                 .with(this)
